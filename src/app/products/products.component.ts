@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Product } from '../model/product.model';
+import { ProductService } from '../services/product.service';
 
 @Component({
   selector: 'app-products',
@@ -6,23 +8,40 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./products.component.css']
 })
 export class ProductsComponent implements OnInit{
-  products! : Array<any>; // la varibale doit etre initialiée , je mets la point d'exclamation pour dire au compilateur je m'en occupe 
+  products! : Array<Product>; // la varibale doit etre initialiée , je mets la point d'exclamation pour dire au compilateur je m'en occupe 
   //autre solution  products : Array<any> | undefined ;
 
-  constructor(){}
+  errorMessage! : string;
+
+  //pour que je puisse utiliser ce service il faut l'injecter 
+  constructor(private productService : ProductService){
+
+  }
 
   ngOnInit(): void {
-    this.products=[
-    {id:1,name :"Computer",price:4600},
-    {id:1,name :"printer",price:1200},
-    {id:1,name :"Smart phone",price:1400},
-    ]
+   this.handleGetAllProducts();
     
   }
 
-  handleDeleteProduct(p:any){
-    let index = this.products.indexOf(p);
-    this.products.splice(index,1);
+  handleGetAllProducts(){
+    this.productService.getAllProducts().subscribe({
+      next : (data) => { // programmation asynchrone
+        this.products=data;
+      },
+      error : (err) => {
+        this.errorMessage = err;
+      }
+  
+     });
+     
+  }
+  handleDeleteProduct(p:Product){
+    this.productService.deleteProduct(p.id).subscribe({
+      next : (data) =>{
+        this.handleGetAllProducts();
+      },
+    })
+    
   }
 
 
