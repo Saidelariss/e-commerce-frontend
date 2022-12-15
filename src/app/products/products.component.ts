@@ -19,6 +19,7 @@ export class ProductsComponent implements OnInit{
   }
 
   ngOnInit(): void {
+    
    this.handleGetAllProducts();
     
   }
@@ -36,12 +37,29 @@ export class ProductsComponent implements OnInit{
      
   }
   handleDeleteProduct(p:Product){
+    let conf=confirm("Are you sure?");
+    if(conf==false) return;
     this.productService.deleteProduct(p.id).subscribe({
       next : (data) =>{
-        this.handleGetAllProducts();
+        // this.handleGetAllProducts(); au lieu d'aller vers le backend et réafficher tous on suprime une ligne dans le front end
+        let index = this.products.indexOf(p);
+        this.products.splice(index,1);
       },
     })
     
+  }
+  handleSetPromotion(p:Product){
+    // let index = this.products.indexOf(p);
+    // this.products[index].promotion=true;
+    let promo = p.promotion;
+    this.productService.setPromotion(p.id).subscribe({
+      next : (data)=>{
+        p.promotion=!promo;
+      },
+      error : err => {
+        this.errorMessage=err;
+      }
+    })
   }
 
 
