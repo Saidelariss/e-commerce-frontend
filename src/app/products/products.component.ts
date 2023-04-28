@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from '../model/product.model';
 import { ProductService } from '../services/product.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-products',
@@ -12,16 +13,43 @@ export class ProductsComponent implements OnInit{
   //autre solution  products : Array<any> | undefined ;
 
   errorMessage! : string;
+  searchFormGroup! : FormGroup;
 
+  currentPage : number = 0;
+  pageSize : number = 5;
+  totalPages : number = 0;
+
+  currentAction: string='all';
+
+  //généralement on utilise le constructeur que pour l'injection de dépendances 
   //pour que je puisse utiliser ce service il faut l'injecter 
-  constructor(private productService : ProductService){
-
-  }
+  constructor(private productService : ProductService, private fb : FormBuilder){ }
 
   ngOnInit(): void {
     
-   this.handleGetAllProducts();
-    
+  
+   this.searchFormGroup=this.fb.group({
+    keyword : this.fb.control(null)
+   });
+
+   //this.handleGetAllProducts();
+   this.handleGetPageProducts();
+  }
+
+
+  handleGetPageProducts(){
+    this.productService.getPageProducts(this.currentPage,this.pageSize).subscribe({
+      next : (data) => { // programmation asynchrone
+        this.products=data.products;
+        this.totalPages=data.totalPages;
+        console.log(data.totalPages);
+      },
+      error : (err) => {
+        this.errorMessage = err;
+      }
+  
+     });
+     
   }
 
   handleGetAllProducts(){
@@ -60,6 +88,27 @@ export class ProductsComponent implements OnInit{
         this.errorMessage=err;
       }
     })
+  }
+
+  handleSearchProducts(){
+    this.currentPage=0;
+    this.currentAction="search";
+    let keyword=this.searchFormGroup.value.keyword;
+    this.productService.searchProducts(keyword,this.currentPage,this.pageSize).subscribe({
+      next : (data) =>{
+        this.products=data.products;
+        this.totalPages=data.totalPages;
+
+      }
+    })
+  }
+
+  gotoPage(i:number){
+    this.currentPage=i;
+    if(this.currentAction == 'all')
+      this.handleGetPageProducts();
+    else 
+      this.handleSearchProducts();
   }
 
 

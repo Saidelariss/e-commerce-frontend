@@ -5,10 +5,11 @@
     <div class="card" *ngIf="products; else errors">
         <div class="card-header">Products List</div>
         <div class="card-body">
-            <form >
+            {{searchFormGroup.value | json }}
+            <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchProducts()">
                 <div class="input-group">
                     <label class="input-group-text">Keyword:</label>
-                    <input type="text" class="form-control">
+                    <input type="text" class="form-control" formControlName="keyword">
                     <button class="btn btn-info">
                         <i class="bi bi-search"></i>
                     </button>
@@ -42,6 +43,13 @@
                 </tbody>
 
             </table>
+
+            <ul class="nav nav-pills">
+                <li *ngFor="let item of [].constructor(this.totalPages); let i = index">
+                    <a (click)="gotoPage(i)" [ngClass]="i==currentPage?'btn btn-info':'btn btn-outline-info'" class=" ms-1 mt-1">{{i}}</a>
+                </li>
+                
+            </ul>
         </div>
     </div>
 </div>
