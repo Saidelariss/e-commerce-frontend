@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Product } from '../model/product.model';
 import { ProductService } from '../services/product.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { AuthenticationService } from '../services/authentication.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-products',
@@ -23,7 +25,7 @@ export class ProductsComponent implements OnInit{
 
   //généralement on utilise le constructeur que pour l'injection de dépendances 
   //pour que je puisse utiliser ce service il faut l'injecter 
-  constructor(private productService : ProductService, private fb : FormBuilder){ }
+  constructor(private productService : ProductService, private fb : FormBuilder, public authService : AuthenticationService,private router: Router){ }
 
   ngOnInit(): void {
     
@@ -69,7 +71,7 @@ export class ProductsComponent implements OnInit{
     if(conf==false) return;
     this.productService.deleteProduct(p.id).subscribe({
       next : (data) =>{
-        // this.handleGetAllProducts(); au lieu d'aller vers le backend et réafficher tous on suprime une ligne dans le front end
+        // this.handleGetAllProducts(); au lieu d'aller vers le back-end et réafficher tous on suprime juste une ligne dans le front end
         let index = this.products.indexOf(p);
         this.products.splice(index,1);
       },
@@ -111,5 +113,12 @@ export class ProductsComponent implements OnInit{
       this.handleSearchProducts();
   }
 
+  handleNewProduct(){
+    this.router.navigateByUrl("/admin/newProduct");
+  }
+
+  handleEditProduct(p:Product){
+    this.router.navigateByUrl("/admin/editProduct/"+p.id)
+  }
 
 }

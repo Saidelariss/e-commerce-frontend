@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { PageProduct, Product } from '../model/product.model';
 import { UUID } from 'angular2-uuid';
+import { ValidationErrors } from '@angular/forms';
 //un service utilise le décorateur @Injectable
 @Injectable({
   providedIn: 'root' /* pour pouvoir utiliser un service , ce dernier doit être declaré dans la partie 
@@ -63,6 +64,31 @@ export class ProductService {
     return of({page:page,size:size,products:pageProducts,totalPages:totalPages});
    }
 
+   public addNewProduct(product : Product): Observable<Product>{
+    product.id=UUID.UUID();
+    this.products.push(product);
+    return of(product);
+   }
 
+   public getProduct(id:string): Observable<Product>{
+    console.log(id);
+    let product =  this.products.find(p => p.id==id);
+    if(product) return of(product);
+    else return throwError(( ()=>new Error("product not found")))
+   }
+
+   getErrorMessage(fieldName:string , error: ValidationErrors){
+    if(error['required']){
+      return fieldName + " is Required";
+    } else if(error['minlength']){
+      
+      return fieldName + " should have at least " + error['minlength']['requiredLength']+" Characters"
+    } else return "";
+  }
+
+  public updateProduct(product : Product) : Observable<Product>{
+    this.products=this.products.map(p=>(p.id==product.id)?product:p);
+    return of(product);
+  }
 
 }

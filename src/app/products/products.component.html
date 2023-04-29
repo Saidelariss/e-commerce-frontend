@@ -1,7 +1,11 @@
+    
     <ng-template #errors>
         <div class="text-danger">{{errorMessage}}</div> 
     </ng-template>  
 <div class="container">
+    <nav *ngIf="authService.hasRole('ADMIN')" class="p-2 m-1 border border-info">
+        <button class="btn btn-outline-info " (click)="handleNewProduct()">New Product</button>
+    </nav>
     <div class="card" *ngIf="products; else errors">
         <div class="card-header">Products List</div>
         <div class="card-body">
@@ -31,14 +35,23 @@
                         <td>
                             <i *ngIf="p.promotion==true" class="bi bi-heart-fill text-success"></i>
                         </td>
-                        <td>
+                        <td *ngIf="authService.hasRole('ADMIN')">
                             <button (click)="handleSetPromotion(p)" [ngClass]="p.promotion==true?'btn-danger':'btn-success'" class="btn btn-success">
                                 <span *ngIf="p.promotion==true">Promo Off</span>
                                 <span *ngIf="p.promotion==false">Promo On</span>
 
                             </button>
                         </td>
-                        <td><button (click)="handleDeleteProduct(p)" class="btn btn-danger"><i class="bi bi-trash"></i></button></td>
+                        <td *ngIf="authService.hasRole('ADMIN')">
+                            <button (click)="handleDeleteProduct(p)" class="btn btn-danger">
+                                <i class="bi bi-trash"></i>
+                             </button>
+                        </td>
+                        <td *ngIf="authService.hasRole('ADMIN')">
+                            <button (click)="handleEditProduct(p)" class="btn btn-success">
+                                <i class="bi bi-file"></i>
+                             </button>
+                        </td>
                     </tr>
                 </tbody>
 
