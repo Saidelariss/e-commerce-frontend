@@ -15,7 +15,7 @@ export class AuthenticationService {
   constructor() {
     this.users.push({userId:UUID.UUID(),username:"user1",password:"1234",roles:["USER"]},
     {userId:UUID.UUID(),username:"user2",password:"1234",roles:["USER"]},
-    {userId:UUID.UUID(),username:"admin",password:"1234",roles:["USER","ADMIN"]}
+    {userId:UUID.UUID(),username:"admin",password:"1234",roles:["ADMIN"]}
     )
    }
 

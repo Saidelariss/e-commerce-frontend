@@ -10,17 +10,18 @@ import { ValidationErrors } from '@angular/forms';
                     l'injecter ou je veux ( ce n'est pas la peine de déclarer ce service dans providers de module)*/
 })
 export class ProductService {
+  private numberProducts : number =1;
   private products! : Array<Product>;
   constructor() { 
     this.products=[
-      {id:UUID.UUID(),name :"Computer",price:4600,promotion:true},
-      {id:UUID.UUID(),name :"printer",price:1200,promotion:false},
-      {id:UUID.UUID(),name :"Smart phone",price:1400,promotion:false},
+      {id:this.numberProducts++,name :"Computer",price:4600,promotion:true},
+      {id:this.numberProducts++,name :"printer",price:1200,promotion:false},
+      {id:this.numberProducts++,name :"Smart phone",price:1400,promotion:false},
       ];
       for(let i = 0;i<10; i++){
-        this.products.push({id:UUID.UUID(),name:"Computer",price: 6500, promotion:true});
-        this.products.push({id:UUID.UUID(),name :"printer",price:1200,promotion:false});
-        this.products.push({id:UUID.UUID(),name :"Smart phone",price:1400,promotion:false});
+        this.products.push({id:this.numberProducts++,name:"Computer",price: 6500, promotion:true});
+        this.products.push({id:this.numberProducts++,name :"printer",price:1200,promotion:false});
+        this.products.push({id:this.numberProducts++,name :"Smart phone",price:1400,promotion:false});
       }
    }
 
@@ -41,13 +42,13 @@ export class ProductService {
    }
 
 
-   public deleteProduct(id:string): Observable<boolean>{
+   public deleteProduct(id:number): Observable<boolean>{
     this.products = this.products.filter(p=>p.id!=id)
     return of(true);
    }
 
 
-   public setPromotion(id : string) : Observable<boolean>{
+   public setPromotion(id : number) : Observable<boolean>{
     let product = this.products.find(p=>p.id==id);
     if(product != undefined){
       product.promotion=!product.promotion;
@@ -65,12 +66,12 @@ export class ProductService {
    }
 
    public addNewProduct(product : Product): Observable<Product>{
-    product.id=UUID.UUID();
+    product.id=this.numberProducts++;
     this.products.push(product);
     return of(product);
    }
 
-   public getProduct(id:string): Observable<Product>{
+   public getProduct(id:number): Observable<Product>{
     console.log(id);
     let product =  this.products.find(p => p.id==id);
     if(product) return of(product);

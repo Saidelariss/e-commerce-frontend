@@ -33,7 +33,7 @@ export class LoginComponent implements OnInit {
       next : (user)=>{
         this.authService.authenticateUser(user).subscribe({
           next:(data)=>{
-            this.router.navigateByUrl("/admin");
+            this.router.navigateByUrl("/admin/products");
           }
 
         })

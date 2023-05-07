@@ -1,7 +1,7 @@
 <div class="container mt-3 col-md-6 offset-md-3">
     <form [formGroup]="productFormGroup" (ngSubmit)="handleAddProduct()">
         <div class="mb-3">
-            <label class="form-label">Name</label>
+            <label class="form-label">Product Name</label>
             <input type="text" formControlName="name" class="form-control">
             <small *ngIf="productFormGroup.controls['name'].errors && productFormGroup.controls['name'].touched" class="text-danger">
                 <!-- {{productFormGroup.controls['name'].errors | json}} -->

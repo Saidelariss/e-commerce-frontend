@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./edit-product.component.css']
 })
 export class EditProductComponent implements OnInit {
-  productId! : string;
+  productId! : number;
   product!: Product;
   productFormGroup! : FormGroup
   constructor(private fb :FormBuilder, private route : ActivatedRoute, public productService : ProductService){

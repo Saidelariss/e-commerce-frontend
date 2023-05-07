@@ -6,10 +6,10 @@
     <nav *ngIf="authService.hasRole('ADMIN')" class="p-2 m-1 border border-info">
         <button class="btn btn-outline-info " (click)="handleNewProduct()">New Product</button>
     </nav>
-    <div class="card" *ngIf="products; else errors">
+    <div class="card mt-3" *ngIf="products; else errors">
         <div class="card-header">Products List</div>
         <div class="card-body">
-            {{searchFormGroup.value | json }}
+            <!-- {{searchFormGroup.value | json }} -->
             <form [formGroup]="searchFormGroup" (ngSubmit)="handleSearchProducts()">
                 <div class="input-group">
                     <label class="input-group-text">Keyword:</label>
@@ -21,26 +21,52 @@
             </form>
             <table class="table">
                 <thead>
-                    <tr>
-                        <th>ID</th> <th>Name</th><th>Price</th><th></th><th></th>
+                    <tr *ngIf="authService.hasRole('ADMIN')">
+                        <th>ID</th> <th>Name</th><th>Price</th><th>Promotion</th><th></th><th>Delete</th><th>Edit</th>
                         
                     </tr>
+
+                    <tr *ngIf="authService.hasRole('USER')">
+                        <th>ID</th> <th>Name</th><th>Price</th><th></th><th></th><th></th><th>Promotion</th>
+                        
+                    </tr>
+
                 
                 </thead>
                 <tbody>
                     <tr *ngFor="let p of products">
                         <td>{{p.id}}</td>
                         <td>{{p.name}}</td>
-                        <td>{{p.price}}</td>
-                        <td>
-                            <i *ngIf="p.promotion==true" class="bi bi-heart-fill text-success"></i>
+                        <td>{{p.price}} MAD</td>
+                        <td *ngIf="authService.hasRole('ADMIN')">
+                            &nbsp; &nbsp; &nbsp; &nbsp;<i *ngIf="p.promotion==true" class="bi bi-heart-fill text-success"></i>
+                                                       <i *ngIf="p.promotion==false" class="bi bi-heart-fill text-danger"></i>
                         </td>
+                        <td *ngIf="authService.hasRole('USER')">
+
+                        </td>
+                        <td *ngIf="authService.hasRole('USER')">
+                        </td>
+                        <td *ngIf="authService.hasRole('USER')">
+                        </td>
+                        <!-- <td *ngIf="authService.hasRole('USER')">
+                       
+                            &nbsp; &nbsp; &nbsp; &nbsp;  <i *ngIf="p.promotion==true" class="bi bi-heart-fill text-success"></i>
+                                                         <i *ngIf="p.promotion==false" class="bi bi-heart-fill text-danger"></i>
+                            
+                        </td> -->
                         <td *ngIf="authService.hasRole('ADMIN')">
                             <button (click)="handleSetPromotion(p)" [ngClass]="p.promotion==true?'btn-danger':'btn-success'" class="btn btn-success">
                                 <span *ngIf="p.promotion==true">Promo Off</span>
                                 <span *ngIf="p.promotion==false">Promo On</span>
 
                             </button>
+                            <td *ngIf="authService.hasRole('USER')">
+                                <div class="promotionUSer" [ngClass]="p.promotion==true?'text-danger':'text-success'" >
+                                    <span *ngIf="p.promotion==true">Promo Off</span>
+                                    <span *ngIf="p.promotion==false">Promo On</span>
+    
+                                </div>
                         </td>
                         <td *ngIf="authService.hasRole('ADMIN')">
                             <button (click)="handleDeleteProduct(p)" class="btn btn-danger">
@@ -49,7 +75,7 @@
                         </td>
                         <td *ngIf="authService.hasRole('ADMIN')">
                             <button (click)="handleEditProduct(p)" class="btn btn-success">
-                                <i class="bi bi-file"></i>
+                                <i class="bi bi-pencil-square"></i>
                              </button>
                         </td>
                     </tr>
