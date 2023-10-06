@@ -10,6 +10,7 @@ import { LoginComponent } from './login/login.component';
 import { AdminTemplateComponent } from './admin-template/admin-template.component';
 import { NewProductComponent } from './new-product/new-product.component';
 import { EditProductComponent } from './edit-product/edit-product.component';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 //un module est une classe qui utilise le décorateur @NgModule
 @NgModule({
@@ -25,7 +26,8 @@ import { EditProductComponent } from './edit-product/edit-product.component';
   imports: [ //importer les modules 
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [], //déclarer les services (pour les service racine ce n'est pas la peine de le faire)
   bootstrap: [AppComponent] //ce module lorsque il va être chargé, quel est le composant qui va etre chargé en premier, c'est AppComponent

@@ -23,6 +23,8 @@ export class ProductsComponent implements OnInit{
 
   currentAction: string='all';
 
+  fisrtExecuted : boolean = true;
+
   //généralement on utilise le constructeur que pour l'injection de dépendances 
   //pour que je puisse utiliser ce service il faut l'injecter 
   constructor(private productService : ProductService, private fb : FormBuilder, public authService : AuthenticationService,private router: Router){ }
@@ -44,7 +46,7 @@ export class ProductsComponent implements OnInit{
       next : (data) => { // programmation asynchrone
         this.products=data.products;
         this.totalPages=data.totalPages;
-        console.log(data.totalPages);
+        console.log("page : "+data);
       },
       error : (err) => {
         this.errorMessage = err;
@@ -58,12 +60,15 @@ export class ProductsComponent implements OnInit{
     this.productService.getAllProducts().subscribe({
       next : (data) => { // programmation asynchrone
         this.products=data;
+
       },
       error : (err) => {
         this.errorMessage = err;
       }
   
      });
+     console.log(this.products);
+     
      
   }
   handleDeleteProduct(p:Product){
@@ -93,7 +98,11 @@ export class ProductsComponent implements OnInit{
   }
 
   handleSearchProducts(){
-    this.currentPage=0;
+    if(this.fisrtExecuted){
+      this.currentPage=0;
+      this.fisrtExecuted=false;
+    }  
+    console.log(this.currentPage);
     this.currentAction="search";
     let keyword=this.searchFormGroup.value.keyword;
     this.productService.searchProducts(keyword,this.currentPage,this.pageSize).subscribe({
@@ -106,12 +115,16 @@ export class ProductsComponent implements OnInit{
   }
 
   gotoPage(i:number){
+    console.log(i);
     this.currentPage=i;
+
     if(this.currentAction == 'all')
       this.handleGetPageProducts();
     else 
       this.handleSearchProducts();
   }
+
+  
 
   handleNewProduct(){
     this.router.navigateByUrl("/admin/newProduct");

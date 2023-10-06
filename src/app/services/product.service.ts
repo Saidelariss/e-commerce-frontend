@@ -40,44 +40,70 @@ export class ProductService {
     
   //  }
 
-   public getPageProducts(page : number, size : number) : Observable<PageProduct>{//programmation réactif (!impératif)
-    let index = page*size;
-    let totalPages = ~~(this.products.length/size);
-    if(this.products.length % size !=0) totalPages++;
-    let pageProducts = this.products.slice(index,index+size);
-    return of({page:page,size:size,products:pageProducts,totalPages:totalPages});
-  
-   }
+
+  public getPageProducts(page : number, size : number) : Observable<PageProduct>{//programmation réactif (!impératif)
+   return this.http.get<PageProduct>(`http://localhost:8085/products?page=${page}&size=${size}`);
+  }
+
+  //  public getPageProducts(page : number, size : number) : Observable<PageProduct>{//programmation réactif (!impératif)
+  //   let index = page*size;
+  //   let totalPages = ~~(this.products.length/size);
+  //   if(this.products.length % size !=0) totalPages++;
+  //   let pageProducts = this.products.slice(index,index+size);
+  //   return of({page:page,size:size,products:pageProducts,totalPages:totalPages});
+  //  }
 
 
-   public deleteProduct(id:number): Observable<boolean>{
-    this.products = this.products.filter(p=>p.id!=id)
-    return of(true);
-   }
+
+  public deleteProduct(id:number): Observable<boolean>{
+    return this.http.delete<boolean>(`http://localhost:8085/product/${id}`)
+  }
+
+  //  public deleteProduct(id:number): Observable<boolean>{
+  //   this.products = this.products.filter(p=>p.id!=id)
+  //   return of(true);
+  //  }
 
 
-   public setPromotion(id : number) : Observable<boolean>{
-    let product = this.products.find(p=>p.id==id);
-    if(product != undefined){
-      product.promotion=!product.promotion;
-      return of(true);
-    } else return throwError(()=>new Error("Product not found "))
-   }
+  public setPromotion(id : number) : Observable<boolean>{
+    return this.http.patch<boolean>(`http://localhost:8085/product/${id}`,{})
+  }
+
+
+  //  public setPromotion(id : number) : Observable<boolean>{
+  //   let product = this.products.find(p=>p.id==id);
+  //   if(product != undefined){
+  //     product.promotion=!product.promotion;
+  //     return of(true);
+  //   } else return throwError(()=>new Error("Product not found "))
+  //  }
+
 
    public searchProducts(keyword: string,page:number , size : number): Observable<PageProduct>{
-    let result = this.products.filter(p=>p.name.includes(keyword));
-    let index = page*size;
-    let totalPages = ~~(result.length/size);
-    if(this.products.length % size !=0) totalPages++;
-    let pageProducts = result.slice(index,index+size);
-    return of({page:page,size:size,products:pageProducts,totalPages:totalPages});
+   return  this.http.get<PageProduct>(`http://localhost:8085/products?page=${page}&size=${size}&keyword=${keyword}`);
    }
 
-   public addNewProduct(product : Product): Observable<Product>{
-    product.id=this.numberProducts++;
-    this.products.push(product);
-    return of(product);
-   }
+  //  public searchProducts(keyword: string,page:number , size : number): Observable<PageProduct>{
+  //   let result = this.products.filter(p=>p.name.includes(keyword));
+  //   let index = page*size;
+  //   let totalPages = ~~(result.length/size);
+  //   if(this.products.length % size !=0) totalPages++;
+  //   let pageProducts = result.slice(index,index+size);
+  //   return of({page:page,size:size,products:pageProducts,totalPages:totalPages});
+  //  }
+
+  public addNewProduct(product : Product): Observable<Boolean>{
+    const body = { name:product.name, price:product.price, promotion:product.promotion};
+    const headers = new HttpHeaders().set('Content-Type', 'application/json');
+    return this.http.post<Boolean>(`http://localhost:8085/product`,body,{headers : headers});
+  }
+  
+
+  //  public addNewProduct(product : Product): Observable<Product>{
+  //   product.id=this.numberProducts++;
+  //   this.products.push(product);
+  //   return of(product);
+  //  }
 
    public getProduct(id:number): Observable<Product>{
     console.log(id);
@@ -95,9 +121,15 @@ export class ProductService {
     } else return "";
   }
 
+
   public updateProduct(product : Product) : Observable<Product>{
-    this.products=this.products.map(p=>(p.id==product.id)?product:p);
-    return of(product);
-  }
+    const body = { name:product.name, price:product.price, promotion:product.promotion};
+    return this.http.post<Product>(`http://localhost:8085/product`,body);
+  }  
+
+  // public updateProduct(product : Product) : Observable<Product>{
+  //   this.products=this.products.map(p=>(p.id==product.id)?product:p);
+  //   return of(product);
+  // }
 
 }
