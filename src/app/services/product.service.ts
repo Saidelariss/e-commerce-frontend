@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { PageProduct, Product } from '../model/product.model';
 import { UUID } from 'angular2-uuid';
 import { ValidationErrors } from '@angular/forms';
@@ -12,7 +13,7 @@ import { ValidationErrors } from '@angular/forms';
 export class ProductService {
   private numberProducts : number =1;
   private products! : Array<Product>;
-  constructor() { 
+  constructor(private http: HttpClient) { 
     this.products=[
       {id:this.numberProducts++,name :"Computer",price:4600,promotion:true},
       {id:this.numberProducts++,name :"printer",price:1200,promotion:false},
@@ -25,12 +26,19 @@ export class ProductService {
       }
    }
 
-   public getAllProducts() : Observable<Product[]>{//programmation réactif (!impératif)
-    let rnd = Math.random();
-    if(rnd<0.1) return throwError(()=>new Error("Internet connexion error"));
-    return of(this.products);
+   public getAllProducts():Observable<Product[]>{
     
+    return this.http.get<Product[]>('http://localhost:8085/products') ; 
+    
+        
    }
+
+  //  public getAllProducts() : Observable<Product[]>{//programmation réactif (!impératif)
+  //   let rnd = Math.random();
+  //   if(rnd<0.1) return throwError(()=>new Error("Internet connexion error"));
+  //   return of(this.products);
+    
+  //  }
 
    public getPageProducts(page : number, size : number) : Observable<PageProduct>{//programmation réactif (!impératif)
     let index = page*size;
