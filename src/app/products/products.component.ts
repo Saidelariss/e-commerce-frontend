@@ -132,6 +132,7 @@ export class ProductsComponent implements OnInit{
 
   handleEditProduct(p:Product){
     this.router.navigateByUrl("/admin/editProduct/"+p.id)
+    console.log("id : "+p.id);
   }
 
 }

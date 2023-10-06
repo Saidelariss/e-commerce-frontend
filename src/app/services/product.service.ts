@@ -14,16 +14,29 @@ export class ProductService {
   private numberProducts : number =1;
   private products! : Array<Product>;
   constructor(private http: HttpClient) { 
-    this.products=[
-      {id:this.numberProducts++,name :"Computer",price:4600,promotion:true},
-      {id:this.numberProducts++,name :"printer",price:1200,promotion:false},
-      {id:this.numberProducts++,name :"Smart phone",price:1400,promotion:false},
-      ];
-      for(let i = 0;i<10; i++){
-        this.products.push({id:this.numberProducts++,name:"Computer",price: 6500, promotion:true});
-        this.products.push({id:this.numberProducts++,name :"printer",price:1200,promotion:false});
-        this.products.push({id:this.numberProducts++,name :"Smart phone",price:1400,promotion:false});
-      }
+    // this.products=[
+    //   {id:this.numberProducts++,name :"Computer",price:4600,promotion:true},
+    //   {id:this.numberProducts++,name :"printer",price:1200,promotion:false},
+    //   {id:this.numberProducts++,name :"Smart phone",price:1400,promotion:false},
+    //   ];
+    //   for(let i = 0;i<10; i++){
+    //     this.products.push({id:this.numberProducts++,name:"Computer",price: 6500, promotion:true});
+    //     this.products.push({id:this.numberProducts++,name :"printer",price:1200,promotion:false});
+    //     this.products.push({id:this.numberProducts++,name :"Smart phone",price:1400,promotion:false});
+    //   }
+
+    
+      this.getAllProducts().subscribe({
+        next : (data) => { // programmation asynchrone
+          this.products=data
+         console.log(this.products)
+        },
+        error : (err) => {
+         
+        }
+    
+      })
+      
    }
 
    public getAllProducts():Observable<Product[]>{
@@ -95,7 +108,7 @@ export class ProductService {
   public addNewProduct(product : Product): Observable<Boolean>{
     const body = { name:product.name, price:product.price, promotion:product.promotion};
     const headers = new HttpHeaders().set('Content-Type', 'application/json');
-    return this.http.post<Boolean>(`http://localhost:8085/product`,body,{headers : headers});
+    return this.http.post<Boolean>(`http://localhost:8085/addProduct`,body,{headers : headers});
   }
   
 
@@ -122,9 +135,10 @@ export class ProductService {
   }
 
 
+  
   public updateProduct(product : Product) : Observable<Product>{
     const body = { name:product.name, price:product.price, promotion:product.promotion};
-    return this.http.post<Product>(`http://localhost:8085/product`,body);
+    return this.http.post<Product>(`http://localhost:8085/updateProduct`,body);
   }  
 
   // public updateProduct(product : Product) : Observable<Product>{
