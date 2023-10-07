@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AppUser } from '../model/user.model';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { UUID } from 'angular2-uuid';
 import { Observable, of, throwError } from 'rxjs';
 
@@ -10,9 +11,10 @@ import { Observable, of, throwError } from 'rxjs';
 export class AuthenticationService {
   users : AppUser[]=[];
   authenticatedUser : AppUser | undefined;
+ 
 
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.users.push({userId:UUID.UUID(),username:"user1",password:"1234",roles:["USER"]},
     {userId:UUID.UUID(),username:"user2",password:"1234",roles:["USER"]},
     {userId:UUID.UUID(),username:"admin",password:"1234",roles:["ADMIN"]}
@@ -20,17 +22,21 @@ export class AuthenticationService {
    }
 
    public login(username:string, password:string): Observable<AppUser>{
-    console.log(username);
-    let user = this.users.find(user=>{ //normalement le back-end qui fait ce travail
-            return  user.username==username
-    });
-    // let user = this.users.find(u=> u.username==username);
-    console.log(user);
-    
-    if(!user) return throwError(()=>new Error("User not found"));
-    if(user.password != password) return throwError(()=>new Error("Bad credentials"));
-    return of(user);
+    return this.http.post<AppUser>('http://localhost:8085/authenticate',{username:username,password:password});
    }
+
+  //  public login(username:string, password:string): Observable<AppUser>{
+  //   console.log(username);
+  //   let user = this.users.find(user=>{ //normalement le back-end qui fait ce travail
+  //           return  user.username==username
+  //   });
+  //   // let user = this.users.find(u=> u.username==username);
+  //   console.log(user);
+    
+  //   if(!user) return throwError(()=>new Error("User not found"));
+  //   if(user.password != password) return throwError(()=>new Error("Bad credentials"));
+  //   return of(user);
+  //  }
 
    public authenticateUser(appUSer : AppUser):Observable<Boolean>{
     this.authenticatedUser = appUSer;
@@ -39,7 +45,7 @@ export class AuthenticationService {
    }
 
    public hasRole(role : string) : boolean{
-    return this.authenticatedUser!.roles.includes(role);
+    return this.authenticatedUser!.roles.includes("ROLE_"+role);
    }
 
    public isAuthenticated(){
